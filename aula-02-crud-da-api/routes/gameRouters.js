@@ -12,4 +12,10 @@ gameRoutes.get("/games", gameController.getAllGames)
 // endpoint para CADASTRAR UM JOGO
 gameRoutes.post("/games", gameController.createGame)
 
+// endpoint para EXCLUIR UM JOGO (c/ parâmetro obrigatório ID)
+gameRoutes.delete("/games/:id", gameController.deleteGame)
+
+// endpoint para ALTERAR UM JOGO (dados são enviados no corpo da requisição)
+gameRoutes.put("/games/:id", gameController.updateGame)
+
 export default gameRoutes

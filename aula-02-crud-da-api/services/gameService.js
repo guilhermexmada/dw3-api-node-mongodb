@@ -33,6 +33,31 @@ class gameService{
             console.log(error)
         }
     }
+
+    // método de excluir Game
+    async Delete(id){
+        try {
+            await Game.findByIdAndDelete(id) // método mongoose que seleciona e deleta um documento
+            console.log(`Game com a id ${id} foi deletado.`)
+        } catch (error) {
+            console.log(error)
+        }
+    }
+
+    // método de alterar Game
+    async Update(id, title, platform, year, price){
+        try {
+            await Game.findByIdAndUpdate(id, { // método mongoose que seleciona e altera um documento
+                title,
+                platform,
+                year,
+                price
+            }) 
+            console.log(`Game com a id ${id} foi alterado.`)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 }
 
 export default new gameService() // assim se exporta uma classe

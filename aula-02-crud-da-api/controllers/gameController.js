@@ -1,4 +1,5 @@
 import gameService from '../services/gameService.js' // importando o Service
+import {ObjectId} from 'mongodb' // importa função p/ validar IDs
 
 // função p/ tratar requisição de LISTAR TODOS OS JOGOS
 const getAllGames = async (req,res) => {
@@ -29,4 +30,39 @@ const createGame = async(req, res) => {
     }
 }
 
-export default { getAllGames, createGame } // assim se exporta uma função
+// função p/ tratar a requisição de DELETAR UM JOGO
+const deleteGame = async(req, res) => {
+    try {
+        // coletando ID recebida pela URL
+        const id = req.params.id
+        // validando ID c/ pacote mongodb
+        if(ObjectId.isValid(id)){
+            await gameService.Delete(id)
+            res.status(204).json({message:"O jogo foi excluído com sucesso."}) // http 204 (no context) é para deleções
+        } else{
+            res.status(400).json({error:"Ocorreu um erro na validação da ID."})
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({error:"Erro interno do servidor. Não foi possível excluir o jogo."})
+    }
+}
+
+// função p/ tratar a requisição de ALTERAR UM JOGO
+const updateGame = async(req, res) => {
+    try {
+        const id = req.params.id // ID vem pela URL
+        if(ObjectId.isValid(id)){
+            const {title,platform,year,price} = req.body // dados vem pelo corpo da requisição
+            await gameService.Update(id,title,platform,year,price)
+            res.status(200).json({message:"O jogo foi alterado com sucesso."})
+        }else{
+            res.status(400).json({error:"Ocorreu um erro na validação da ID."})
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({error:"Erro interno do servidor. Não foi possível alterar o jogo."})
+    }
+}
+
+export default { getAllGames, createGame, deleteGame, updateGame } // assim se exporta uma função
