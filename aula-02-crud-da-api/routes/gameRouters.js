@@ -18,4 +18,7 @@ gameRoutes.delete("/games/:id", gameController.deleteGame)
 // endpoint para ALTERAR UM JOGO (dados são enviados no corpo da requisição)
 gameRoutes.put("/games/:id", gameController.updateGame)
 
+// endpoint para BUSCAR UM ÚNICO JOGO
+gameRoutes.get("/games/:id", gameController.getOneGame)
+
 export default gameRoutes

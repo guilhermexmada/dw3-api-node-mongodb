@@ -54,8 +54,9 @@ const updateGame = async(req, res) => {
         const id = req.params.id // ID vem pela URL
         if(ObjectId.isValid(id)){
             const {title,platform,year,price} = req.body // dados vem pelo corpo da requisição
-            await gameService.Update(id,title,platform,year,price)
-            res.status(200).json({message:"O jogo foi alterado com sucesso."})
+            const game = await gameService.Update(id,title,platform,year,price)
+
+            res.status(200).json({message:"O jogo foi alterado com sucesso.", game : game}) // retorna tmb o JSON com o game alterado
         }else{
             res.status(400).json({error:"Ocorreu um erro na validação da ID."})
         }
@@ -65,4 +66,25 @@ const updateGame = async(req, res) => {
     }
 }
 
-export default { getAllGames, createGame, deleteGame, updateGame } // assim se exporta uma função
+// função p/ tratar a requisição de BUSCAR UM JOGO ÚNICO
+const getOneGame = async(req,res) => {
+    try {
+        const id = req.params.id
+        if(ObjectId.isValid(id)){
+            const game = await gameService.getOne(id)
+            // verificando se o jogo foi encontrado
+            if(!game){
+                res.status(404).json({message:"O jogo buscado não foi encontrado."})
+            } else{
+                res.status(200).json({message:"O jogo foi encontrado com sucesso.", game : game})
+            }
+        } else {
+            res.status(400).json({error:"Ocorreu um erro na validação da ID."})
+        }
+    } catch (error) {
+        console.log(error)
+        res.status(500).json({message:"Erro interno do servidor. Não foi possível encontrar o jogo."})
+    }
+}
+
+export default { getAllGames, createGame, deleteGame, updateGame, getOneGame } // assim se exporta uma função
