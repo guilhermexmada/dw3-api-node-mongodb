@@ -4,6 +4,7 @@ import gameRoutes from "./routes/gameRoutes.js"
 import userRoutes from './routes/userRoutes.js'
 import Game from './models/Games.js'
 import User from './models/Users.js'
+import cors from 'cors'
 
 const app = express()
 
@@ -11,6 +12,9 @@ const app = express()
 app.use(express.json()) // Permite uso de json nas operações
 app.use("/", gameRoutes)
 app.use("/", userRoutes)
+
+// configurando CORS
+cors()
 
 // Iniciando a conexão com o banco de dados mongodb
 mongoose.connect("mongodb://127.0.0.1:27017/api-the-games-novo")

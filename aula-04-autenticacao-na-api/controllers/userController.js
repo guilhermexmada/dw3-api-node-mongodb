@@ -1,12 +1,16 @@
 import userServices from "../services/userServices.js"
 import jwt from 'jsonwebtoken' // importando JWT para criar token
+import dotenv from 'dotenv'
+import bcrypt from 'bcrypt'
 
 const JWTSecret = 'thegames-secret' // segredo (geralmente em .env) para gerar token
 
 const createUser = async(req, res) => {
     try {
         const {name, email, password} = req.body
-        await userServices.Create(name, email, password)
+        const salt = bcrypt.genSaltSync(10)
+        const hash = bcrypt.hashSync(password, salt)
+        await userServices.Create(name, email, hash)
         res.status(201).json({message : "Usuário cadastrado com sucesso!"})
     } catch (error) {
         console.log(error)
@@ -24,8 +28,9 @@ const loginUser = async (req, res) => {
             const user = await userServices.getOne(email)
             // se o usuário for encontrado
             if(user != undefined){
-                // verifica se a senha está correta
-                if(user.password == password){
+                // verifica se o hash de senha está correto
+                const correct = bcrypt.compareSync(password, user.password)
+                if(correct){
                     // concede token de autenticação com dados personalizados + secredo + tempo de expiração
                     jwt.sign({id: user._id, email: user.email}, JWTSecret, {expiresIn: '48h'}, 
                         // verifica se ocorreu erro ou, se bem-sucedido, grava token
@@ -54,4 +59,4 @@ const loginUser = async (req, res) => {
     }
 }
 
-export default { createUser, loginUser }
+export default { createUser, loginUser, JWTSecret }
